@@ -1,0 +1,16 @@
+---      
+- hosts: rke2_servers
+  gather_facts: true
+  any_errors_fatal: true
+  become: true
+  serial: 1
+  roles:
+    - role: delete-cluster
+
+- hosts: rke2_agents
+  gather_facts: true
+  any_errors_fatal: true
+  become: true
+  serial: 1
+  roles:
+    - role: delete-cluster

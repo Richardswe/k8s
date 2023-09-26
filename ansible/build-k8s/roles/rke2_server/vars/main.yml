@@ -1,0 +1,5 @@
+---
+# Set true or false bool to fit your needs
+#
+# Make kubectl available on the first master-node for the root user
+kubectl_access: true 

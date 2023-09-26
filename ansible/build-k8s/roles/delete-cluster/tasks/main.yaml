@@ -1,0 +1,36 @@
+- name: Is RKE2 installed?
+  stat:
+    path: /var/lib/rancher 
+  register: rke2_folder
+
+- name: If directory exist
+  debug: 
+    msg: "The RKE2 directory exists"
+  when: rke2_folder.stat.exists
+
+- name: Cluster-deletion
+  debug: 
+    msg: "Starting to delete RKE2-cluster!"
+  when: rke2_folder.stat.exists
+
+- name: No RKE2 cluster
+  debug: 
+    msg: "RKE2 does not exist on the node, canceling playbook!"
+  when: not rke2_folder.stat.exists
+
+- name: Deleting RKE2 and associated files and folders  
+  command: 'bash /usr/local/bin/rke2-uninstall.sh && rm -rf /var/lib/rancher /etc/rancher /var/lib/longhorn/ /etc/cni /opt/cni'
+  register: delete_rke2
+  when: rke2_folder.stat.exists
+
+- name: Reboot the Linux machine {{ ansible_hostname|lower }}
+  reboot:
+    reboot_timeout: 60 
+    test_command: uptime 
+  when: delete_rke2.rc == 0
+  register: machine_up
+
+- name: Machine status
+  debug: 
+    msg: "The machine {{ ansible_nodename }} is up and running again!"
+  when: machine_up == true 

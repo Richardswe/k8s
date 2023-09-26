@@ -1,0 +1,20 @@
+---
+- name: Check that the somefile.conf exists
+  ansible.builtin.stat:
+    path: /etc/cloud/cloud.cfg
+  register: file_status
+
+- name: Ensure we have set etc hosts managed by cloud-init to false 
+  ansible.builtin.lineinfile:
+    path: /etc/cloud/cloud.cfg
+    insertafter: 'ssh_svcname: sshd'
+    line: 'manage_etc_hosts: False'
+  when: not file_status.stat
+
+- name: Distribute hosts file
+  ansible.builtin.copy:
+    src: roles/dist-files/files/hosts
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: '0644'

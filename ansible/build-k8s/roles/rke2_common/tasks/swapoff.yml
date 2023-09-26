@@ -1,0 +1,11 @@
+---
+- name: Turn off swap 
+  ansible.builtin.command: swapoff -a
+
+- name: Comment out swap image in fstab for Ubuntu distros
+  replace: 
+    path: /etc/fstab
+    regexp: '/swap.img       none    swap    sw      0       0'
+    replace: '#/swap.img       none    swap    sw      0       0'
+  when: 
+    - ansible_os_family == 'Ubuntu' 

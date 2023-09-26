@@ -1,0 +1,21 @@
+---
+- name: Reboot the Linux machine {{ ansible_hostname|lower }}
+  reboot:
+    reboot_timeout: 120 
+    test_command: uptime 
+  when: delete_rke2.rc == 0
+  register: machine_up
+
+- name: Extend partition {{ ansible_hostname|lower }}
+  community.general.parted:
+    device: /dev/sdb
+    number: "{{ sdb_info.partitions | length }}"
+    part_end: "100%"
+    resize: true
+    state: present
+  register: ext_part
+
+- name: Massage
+  debug:
+    msg: 
+  when: ext_part.

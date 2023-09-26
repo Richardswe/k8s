@@ -1,0 +1,21 @@
+---
+- name: Check if .bashrc exists in the root directory
+  ansible.builtin.stat:
+    path: /root/.bashrc
+  register: bashrcfile
+
+- name: Create .bashrc if it does not exist
+  ansible.builtin.file: 
+    src: files/.bashrc
+    dest: /root/.bashrc
+  when: not bashrcfile.stat.exists
+
+- name: Add export command in bashrc for Kubectl
+  ansible.builtin.lineinfile:
+    path: /root/.bashrc 
+    insertafter: EOF
+    line: "{{ item }}"
+    state: present
+  with_items:
+  - 'export PATH=/var/lib/rancher/rke2/bin:$PATH'
+  - 'export KUBECONFIG=/etc/rancher/rke2/rke2.yaml'

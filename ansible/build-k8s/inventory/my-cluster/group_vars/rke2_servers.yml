@@ -1,0 +1,28 @@
+---
+# Primary RKE2 server configuration parameters. Remove the curly braces ( {} ) and add your configuration.
+# See https://docs.rke2.io/install/install_options/server_config/ for all configuration options.
+rke2_config: 
+  write-kubeconfig-mode: "0600"
+  tls-san:
+  - vip-address
+  disable: 
+  - rke2-ingress-nginx
+  kube-proxy:
+  - bind-address=0.0.0.0
+  - metrics-bind-address=0.0.0.0:10249
+  kube-scheduler:
+  - bind-address=0.0.0.0
+  - address=0.0.0.0
+  - port=10251
+  kube-controller-manager:
+  - address=0.0.0.0
+  - bind-address=0.0.0.0
+  cni: 
+  - calico
+
+# When choosing CNI, if cilium then disable canal and rke2-kube-proxy
+# 
+# - canal
+# - rke2-kube-proxy        
+  # disable: 
+  # - rke2-ingress-nginx
