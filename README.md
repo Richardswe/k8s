@@ -2,7 +2,8 @@ Build a Kubernetes cluster using RKE2 via Ansible
 Note: me Rickard forked it from Rancher Federal and modified it to fit my needs and I've added some extra features. 
 I've added: 
 - A deletetion cluster playbook
-- true/false boolean vars for choosing to run kubectl from first masternode, add iptable rules, rke2_hardening , to distribute hosts file on all nodes, installation of apparmor if not installed,
+- true/false boolean vars for choosing to run kubectl from first masternode, add iptable rules, rke2_hardening , to distribute hosts file on all nodes, installation of apparmor if not installed. 
+- Bash script to add a worker node
 
 github: https://github.com/richardswe
 
