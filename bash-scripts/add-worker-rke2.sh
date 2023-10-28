@@ -1,4 +1,5 @@
 #!/bin/bash
+# Author: Rickard Andersson 
 # Add a worker node for a RKE2 cluster
 # Add the clustertoken, hostname, cni type (calico/canal),RKE2-version and the server url/ip to the masternode of the cluster
 ROOT_UID=0
@@ -7,7 +8,7 @@ cni_type=
 token=
 vm_name=
 k8s_server=
-rke2_version=v1.25.12+rke2r1
+rke2_version=v1.25.13+rke2r1
 
 echo "Let's check if you're root!"
 if [ "$UID" -eq "$ROOT_UID" ]

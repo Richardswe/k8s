@@ -3,10 +3,12 @@
 # See https://docs.rke2.io/install/install_options/server_config/ for all configuration options.
 rke2_config: 
   write-kubeconfig-mode: "0600"
+  profile: cis-1.23
   tls-san:
   - vip-address
   disable: 
-  - rke2-ingress-nginx
+  - ingress-nginx
+  
   kube-proxy:
   - bind-address=0.0.0.0
   - metrics-bind-address=0.0.0.0:10249
@@ -18,7 +20,7 @@ rke2_config:
   - address=0.0.0.0
   - bind-address=0.0.0.0
   cni: 
-  - calico
+  - canal
 
 # When choosing CNI, if cilium then disable canal and rke2-kube-proxy
 # 
@@ -26,3 +28,4 @@ rke2_config:
 # - rke2-kube-proxy        
   # disable: 
   # - rke2-ingress-nginx
+  # - rke2-kube-proxy

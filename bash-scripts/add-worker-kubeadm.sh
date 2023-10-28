@@ -1,11 +1,38 @@
-# Run this script to install a kubeadm worker node. And run the scripts written in the end. 
+#!/bin/bash
+# Run this script to install a kubeadm worker node. And run the commands written in the end. 
 # Remeber to specify version on row 3-4 and row 58 if you want to modify the hostsfile. And last change the containerd version,
 # row 46.
+# Os support: Ubuntu 20.04
+# Note that the Kubernetes/kubelet/kubeadm versions below are old and the repos too. You may want to modify this script. 
 KUBERNETES_VERSION="1.21.14-00"
 KUBERNETES_VER="1.21.14"
 NODENAME=$(hostname -s)
 
-apt update
+
+echo "Let's check if you're root!"
+if [ "$UID" -eq "$ROOT_UID" ]
+  then echo "You'are root and the installation precedes!"
+else
+    echo "Sorry, You're not root.."
+  echo "Terminating the script.."
+  exit 1
+fi
+
+# swapoff 
+swapoff -a 
+
+elif [ "$os_release" == "Ubuntu" ]
+    then
+  echo "Updating repo and packages and installing curl,wget and apparmor."
+    apt update
+    apt upgrade -y
+    apt install curl wget apparmor -y
+    sed -e '/swap/ s/^#*/#/g' -i /etc/fstab
+else
+    echo "You're running neither Ubuntu or OpenSuse!"
+    exit 1
+fi
+
 
 apt -y install curl apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
@@ -53,18 +80,11 @@ systemctl enable kubelet --now
 kubeadm config images pull
 kubeadm config images pull --cri-socket unix:///run/containerd/containerd.sock
 
-cat << EOF >> /etc/hosts
-172.22.100.18 k8s-vm01
-172.22.100.19 k8s-vm02
-172.22.100.20 k8s-vm03
-172.22.100.21 k8s-vm04
-EOF
-
 # Join a worker
 # On the master node run the command;
 # kubeadm token create --print-join-command
 # Run the output on the worker node, It should be similar to this
-# kubeadm join 10.14.10.39:6443 --token 55ekme.0ahjmz09920bqsyt --discovery-token --ca-cert-hash
+# kubeadm join 10.14.10.39:6443 --token "token" --discovery-token --ca-cert-hash
 #
 #
 # Label only nodes that don't have the label "master"

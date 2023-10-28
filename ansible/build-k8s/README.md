@@ -1,4 +1,11 @@
 Build a Kubernetes cluster using RKE2 via Ansible
+Note: me Rickard forked it from Rancher Federal and modified it to fit my needs and I've added some extra features. 
+I've added: 
+- A deletetion cluster playbook
+- true/false boolean vars for choosing to run kubectl from first masternode, add iptable rules, rke2_hardening , to distribute hosts file on all nodes, installation of apparmor if not installed,
+
+github: https://github.com/richardswe
+
 =========
 ```
                ,        ,  _______________________________
@@ -31,11 +38,9 @@ The RKE2 Ansible playbook supports all [RKE2 Supported Operating Systems](https:
 
 Supported Operating Systems:
 ```yaml
-SLES:
-  - 15 SP2 (amd64)
-  - 15 SP3 (amd64)
-  - 15 SP3 JEOS (amd64)
+SLES/OpenSuse:
   - 15 SP4 JEOS (amd64)
+  - 15 SP5 JEOS (amd64)
 CentOS:
   - 7.8 (amd64)
   - 8.2 (amd64)
@@ -45,14 +50,8 @@ Red Hat:
 Ubuntu:
   - bionic/18.04 (amd64)
   - focal/20.04 (amd64)
+  - jammy/22.04 (amd64)
 ```
-
-Added custom features 
----------------------
-
-2022 august to 10th of november
-It has been added to install apparmor for Suse distros and to enable and start the service
-It has also been added that the name of the node is added in the server and agent config file
 
 
 System requirements
@@ -95,7 +94,7 @@ Last, edit `inventory/my-cluster/hosts.ini` to match the system information gath
 192.16.35.12
 
 [rke2_agents]
-192.16.35.[10:11]
+192.16.35.13
 
 [rke2_cluster:children]
 rke2_servers
@@ -122,10 +121,11 @@ Further info can be found [here](tarball_install/README.md)
 Kubeconfig
 ----------
 
-To get access to your **Kubernetes** cluster just
+If you chose "true" in the  roles/rke2_server/vars/main.yml to get access to your **Kubernetes** cluster just SSH to your first masternode. 
+and run
 
 ```bash
-ssh ec2-user@kubernetes_api_server_host "sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes"
+kubectl get nodes
 ```
 
 Label nodes
@@ -147,7 +147,7 @@ Available configurations
 Set the RKE2 version in rke2_common/vars/main.yaml
 Set the hostnames and node ip's in roles/dist-files/files/hosts
 Set nameservers in roles/dist-files/files/resolv.conf
-Variables should be set in `inventory/cluster/group_vars/rke2_agents.yml` and `inventory/cluster/group_vars/rke2_servers.yml`. See sample variables in `inventory/sample/group_vars` for reference.
+Variables should be set in `inventory/cluster/group_vars/rke2_agents.yml` and `inventory/cluster/group_vars/rke2_servers.yml`. 
 
 
 Uninstall RKE2
@@ -157,20 +157,14 @@ The offical documentation for fully uninstalling the RKE2 cluster can be found i
 
 If you used this module to created the cluster and RKE2 was installed via yum, then you can attempt to run this command to remove all cluster data and all RKE2 scripts.
 
-Replace `ec2-user` with your ansible user.
+Replace `vagrant` with your ansible user.
 ```bash
-ansible -i 18.217.113.10, all -u ec2-user -a "/usr/bin/rke2-uninstall.sh"
+ansible-playbook delete-cluster.yml -i inventory/my-cluster/hosts.ini -u vagrant 
 ```
-
-If the tarball method was used then you can attempt to use the following command:
-```bash
-ansible -i 18.217.113.10, all -u ec2-user -a "/usr/local/bin/rke2-uninstall.sh"
-```
-On rare occasions you may have to run the uninstall commands a second time.
-
 
 Author Information
 ------------------
+[Rickard Andersson](https://github.com/richardswe) # Special thanks to the guys below :) 
 
 [Dave Vigil](https://github.com/dgvigil)
 
