@@ -71,11 +71,6 @@ This playbook requires ansible.utils to run properly. Please see https://docs.an
 ansible-galaxy collection install -r requirements.yml
 ```
 
-Create a new directory based on the `sample` directory within the `inventory` directory:
-
-```bash
-cp -R inventory/sample inventory/my-cluster
-```
 NOTE you can edit the following files in build-k8s with the names vm-hosts,vm-inventory,resolv-config and rke2-vars
 
 Edit the hosts file in roles/dist-files/files/hosts
